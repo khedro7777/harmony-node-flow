@@ -5,7 +5,10 @@ import {
   createUserWithEmailAndPassword,
   signOut as firebaseSignOut,
   onAuthStateChanged,
-  sendEmailVerification
+  sendEmailVerification,
+  sendSignInLinkToEmail,
+  isSignInWithEmailLink,
+  signInWithEmailLink as firebaseSignInWithEmailLink
 } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { connectWallet as web3Connect } from '@/lib/web3';
@@ -19,6 +22,8 @@ interface AuthContextType {
   signOut: () => Promise<void>;
   connectWallet: () => Promise<string>;
   disconnectWallet: () => void;
+  sendSignInLink: (email: string) => Promise<void>;
+  signInWithLink: (email: string, url: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -42,11 +47,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setLoading(false);
     });
 
-    // Check for saved wallet address
     const savedWallet = localStorage.getItem('walletAddress');
     if (savedWallet) {
       setWalletAddress(savedWallet);
     }
+
+    // Handle sign in with email link
+    const emailLink = window.location.href;
+    const email = window.localStorage.getItem('emailForSignIn');
+    if (email && isSignInWithEmailLink(auth, emailLink)) {
+        firebaseSignInWithEmailLink(auth, email, emailLink)
+            .then(() => {
+                window.localStorage.removeItem('emailForSignIn');
+            })
+            .catch((error) => {
+                console.error("Sign in with email link error", error);
+            });
+    }
+
 
     return unsubscribe;
   }, []);
@@ -78,6 +96,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.removeItem('walletAddress');
   };
 
+  const sendSignInLink = async (email: string) => {
+    const actionCodeSettings = {
+      url: `${window.location.origin}/dashboard`,
+      handleCodeInApp: true,
+    };
+    await sendSignInLinkToEmail(auth, email, actionCodeSettings);
+    window.localStorage.setItem('emailForSignIn', email);
+  };
+
+  const signInWithLink = async (email: string, url: string) => {
+      if (isSignInWithEmailLink(auth, url)) {
+          await firebaseSignInWithEmailLink(auth, email, url)
+      }
+  }
+
   const value = {
     user,
     walletAddress,
@@ -86,7 +119,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     signUp,
     signOut,
     connectWallet,
-    disconnectWallet
+    disconnectWallet,
+    sendSignInLink,
+    signInWithLink
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
