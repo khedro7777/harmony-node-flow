@@ -2,37 +2,39 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { FileText, CheckCircle, Download, ExternalLink } from "lucide-react";
+import { useState, useEffect } from "react";
+import { db } from "@/lib/firebase";
+import { collection, getDocs } from "firebase/firestore";
+
+interface Decision {
+  id: string;
+  title: string;
+  cid: string;
+  date: string;
+  votes: { for: number; against: number };
+  outcome: "approved" | "rejected";
+  txHash: string;
+}
 
 const DecisionsView = () => {
-  const decisions = [
-    {
-      id: "1",
-      title: "Q4 Marketing Budget Allocation",
-      cid: "Qm...abc123",
-      date: "2025-10-05",
-      votes: { for: 85, against: 15 },
-      outcome: "approved",
-      txHash: "0x1234...5678"
-    },
-    {
-      id: "2",
-      title: "New Smart Contract Deployment",
-      cid: "Qm...def456",
-      date: "2025-10-01",
-      votes: { for: 92, against: 8 },
-      outcome: "approved",
-      txHash: "0xabcd...efgh"
-    },
-    {
-      id: "3",
-      title: "Change Voting Quorum to 60%",
-      cid: "Qm...ghi789",
-      date: "2025-09-28",
-      votes: { for: 45, against: 55 },
-      outcome: "rejected",
-      txHash: "0x9876...5432"
-    }
-  ];
+  const [decisions, setDecisions] = useState<Decision[]>([]);
+
+  useEffect(() => {
+    const fetchDecisions = async () => {
+      try {
+        const decisionsCollection = collection(db, "decisions");
+        const decisionSnapshot = await getDocs(decisionsCollection);
+        const decisionsList = decisionSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Decision));
+        setDecisions(decisionsList);
+      } catch (error) {
+        console.error("Error fetching decisions: ", error);
+        // Fallback to dummy data
+        setDecisions(dummyDecisions);
+      }
+    };
+
+    fetchDecisions();
+  }, []);
 
   return (
     <div className="space-y-6">
@@ -113,5 +115,35 @@ const DecisionsView = () => {
     </div>
   );
 };
+
+const dummyDecisions: Decision[] = [
+    {
+      id: "1",
+      title: "Q4 Marketing Budget Allocation",
+      cid: "Qm...abc123",
+      date: "2025-10-05",
+      votes: { for: 85, against: 15 },
+      outcome: "approved",
+      txHash: "0x1234...5678"
+    },
+    {
+      id: "2",
+      title: "New Smart Contract Deployment",
+      cid: "Qm...def456",
+      date: "2025-10-01",
+      votes: { for: 92, against: 8 },
+      outcome: "approved",
+      txHash: "0xabcd...efgh"
+    },
+    {
+      id: "3",
+      title: "Change Voting Quorum to 60%",
+      cid: "Qm...ghi789",
+      date: "2025-09-28",
+      votes: { for: 45, against: 55 },
+      outcome: "rejected",
+      txHash: "0x9876...5432"
+    }
+  ];
 
 export default DecisionsView;

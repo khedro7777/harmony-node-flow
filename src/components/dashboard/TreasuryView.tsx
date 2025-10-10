@@ -2,36 +2,74 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Wallet, TrendingUp, ArrowUpRight, ArrowDownRight, Clock } from "lucide-react";
+import { useState, useEffect } from "react";
+import { db } from "@/lib/firebase";
+import { collection, getDocs } from "firebase/firestore";
+
+interface Transaction {
+  id: string;
+  type: "incoming" | "outgoing" | "pending";
+  amount: string;
+  from?: string;
+  to?: string;
+  date: string;
+  status: "completed" | "pending";
+  approvals?: string;
+}
 
 const TreasuryView = () => {
-  const transactions = [
-    {
-      id: "1",
-      type: "incoming",
-      amount: "5,000 USDC",
-      from: "Investor Round A",
-      date: "2025-10-08",
-      status: "completed"
-    },
-    {
-      id: "2",
-      type: "outgoing",
-      amount: "1,500 USDC",
-      to: "Marketing Budget",
-      date: "2025-10-07",
-      status: "completed",
-      approvals: "8/10"
-    },
-    {
-      id: "3",
-      type: "pending",
-      amount: "2,000 USDC",
-      to: "Development Team",
-      date: "2025-10-06",
-      status: "pending",
-      approvals: "5/10"
-    }
-  ];
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [stats, setStats] = useState({
+    totalBalance: "$0",
+    totalInflow: "$0",
+    totalOutflow: "$0",
+    inflowChange: "+0%",
+    outflowChange: "-0%",
+  });
+
+  useEffect(() => {
+    const fetchTreasuryData = async () => {
+      try {
+        const transactionsCollection = collection(db, "transactions");
+        const transactionSnapshot = await getDocs(transactionsCollection);
+        const transactionsList = transactionSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Transaction));
+        setTransactions(transactionsList);
+
+        // Calculate stats (simplified)
+        const totalInflow = transactionsList
+          .filter(tx => tx.type === 'incoming')
+          .reduce((acc, tx) => acc + parseFloat(tx.amount.replace(/[^0-9.-]+/g, "")), 0);
+        
+        const totalOutflow = transactionsList
+          .filter(tx => tx.type === 'outgoing')
+          .reduce((acc, tx) => acc + parseFloat(tx.amount.replace(/[^0-9.-]+/g, "")), 0);
+
+        const totalBalance = totalInflow - totalOutflow;
+
+        setStats({
+          totalBalance: `$${totalBalance.toLocaleString()}`,
+          totalInflow: `$${totalInflow.toLocaleString()}`,
+          totalOutflow: `$${totalOutflow.toLocaleString()}`,
+          inflowChange: "+12.5%", // Dummy data
+          outflowChange: "-8.3%", // Dummy data
+        });
+
+      } catch (error) {
+        console.error("Error fetching treasury data: ", error);
+        // Fallback to dummy data
+        setTransactions(dummyTransactions);
+        setStats({
+            totalBalance: "$125,450",
+            totalInflow: "$45,230",
+            totalOutflow: "$12,780",
+            inflowChange: "+12.5%",
+            outflowChange: "-8.3%",
+        });
+      }
+    };
+
+    fetchTreasuryData();
+  }, []);
 
   return (
     <div className="space-y-6">
@@ -56,19 +94,19 @@ const TreasuryView = () => {
             </Badge>
           </div>
           <p className="text-sm opacity-90 mb-2">Total Balance</p>
-          <p className="text-3xl font-bold">$125,450</p>
-          <p className="text-sm opacity-75 mt-2">≈ 125,450 USDC</p>
+          <p className="text-3xl font-bold">{stats.totalBalance}</p>
+          <p className="text-sm opacity-75 mt-2">≈ {stats.totalBalance.replace("$", "")} USDC</p>
         </Card>
 
         <Card className="p-6">
           <div className="flex items-center justify-between mb-4">
             <TrendingUp className="h-8 w-8 text-success" />
             <Badge variant="outline" className="bg-success/10 text-success border-success/20">
-              +12.5%
+              {stats.inflowChange}
             </Badge>
           </div>
           <p className="text-sm text-muted-foreground mb-2">Total Inflow</p>
-          <p className="text-3xl font-bold">$45,230</p>
+          <p className="text-3xl font-bold">{stats.totalInflow}</p>
           <p className="text-sm text-muted-foreground mt-2">This month</p>
         </Card>
 
@@ -76,11 +114,11 @@ const TreasuryView = () => {
           <div className="flex items-center justify-between mb-4">
             <ArrowDownRight className="h-8 w-8 text-destructive" />
             <Badge variant="outline" className="bg-destructive/10 text-destructive border-destructive/20">
-              -8.3%
+              {stats.outflowChange}
             </Badge>
           </div>
           <p className="text-sm text-muted-foreground mb-2">Total Outflow</p>
-          <p className="text-3xl font-bold">$12,780</p>
+          <p className="text-3xl font-bold">{stats.totalOutflow}</p>
           <p className="text-sm text-muted-foreground mt-2">This month</p>
         </Card>
       </div>
@@ -160,5 +198,34 @@ const TreasuryView = () => {
     </div>
   );
 };
+
+const dummyTransactions: Transaction[] = [
+    {
+      id: "1",
+      type: "incoming",
+      amount: "5,000 USDC",
+      from: "Investor Round A",
+      date: "2025-10-08",
+      status: "completed"
+    },
+    {
+      id: "2",
+      type: "outgoing",
+      amount: "1,500 USDC",
+      to: "Marketing Budget",
+      date: "2025-10-07",
+      status: "completed",
+      approvals: "8/10"
+    },
+    {
+      id: "3",
+      type: "pending",
+      amount: "2,000 USDC",
+      to: "Development Team",
+      date: "2025-10-06",
+      status: "pending",
+      approvals: "5/10"
+    }
+  ];
 
 export default TreasuryView;

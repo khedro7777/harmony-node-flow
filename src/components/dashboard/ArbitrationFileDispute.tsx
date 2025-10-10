@@ -7,6 +7,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ArrowLeft, Upload, Lock, FileText, AlertCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { db } from "@/lib/firebase";
+import { collection, addDoc } from "firebase/firestore";
 
 interface ArbitrationFileDisputeProps {
   onBack: () => void;
@@ -23,21 +25,52 @@ const ArbitrationFileDispute = ({ onBack }: ArbitrationFileDisputeProps) => {
     confidential: false,
   });
   const [files, setFiles] = useState<File[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Generate case ID
-    const caseId = `CB-2025-${String(Math.floor(Math.random() * 100000)).padStart(5, '0')}`;
-    
-    toast({
-      title: "Dispute Filed Successfully",
-      description: `Your case ${caseId} has been submitted and is pending arbitrator assignment.`,
-    });
-    
-    setTimeout(() => {
-      onBack();
-    }, 1500);
+    setIsSubmitting(true);
+
+    try {
+      const caseId = `CB-2025-${String(Math.floor(Math.random() * 100000)).padStart(5, '0')}`;
+      
+      // TODO: Implement actual file upload to IPFS and get CIDs
+      const evidence = files.map(file => ({
+        name: file.name,
+        type: file.type,
+        size: file.size,
+        // cid: "..." // To be added after IPFS upload
+      }));
+
+      await addDoc(collection(db, "cases"), {
+        ...formData,
+        caseId,
+        status: "Submitted",
+        filed: new Date().toISOString().split('T')[0],
+        lastUpdate: new Date().toISOString().split('T')[0],
+        evidenceCount: files.length,
+        priority: "Medium", // Default priority
+      });
+
+      toast({
+        title: "Dispute Filed Successfully",
+        description: `Your case ${caseId} has been submitted and is pending arbitrator assignment.`,
+      });
+
+      setTimeout(() => {
+        onBack();
+      }, 1500);
+
+    } catch (error) {
+      console.error("Error filing dispute: ", error);
+      toast({
+        title: "Error",
+        description: "There was a problem submitting your dispute. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -86,6 +119,7 @@ const ArbitrationFileDispute = ({ onBack }: ArbitrationFileDisputeProps) => {
                 value={formData.complainant}
                 onChange={(e) => setFormData({ ...formData, complainant: e.target.value })}
                 required
+                disabled={isSubmitting}
               />
             </div>
             <div className="space-y-2">
@@ -96,6 +130,7 @@ const ArbitrationFileDispute = ({ onBack }: ArbitrationFileDisputeProps) => {
                 value={formData.defendant}
                 onChange={(e) => setFormData({ ...formData, defendant: e.target.value })}
                 required
+                disabled={isSubmitting}
               />
             </div>
           </div>
@@ -109,6 +144,7 @@ const ArbitrationFileDispute = ({ onBack }: ArbitrationFileDisputeProps) => {
               <Select
                 value={formData.category}
                 onValueChange={(value) => setFormData({ ...formData, category: value })}
+                disabled={isSubmitting}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select dispute category" />
@@ -131,6 +167,7 @@ const ArbitrationFileDispute = ({ onBack }: ArbitrationFileDisputeProps) => {
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 required
+                disabled={isSubmitting}
               />
             </div>
 
@@ -143,6 +180,7 @@ const ArbitrationFileDispute = ({ onBack }: ArbitrationFileDisputeProps) => {
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 rows={8}
                 required
+                disabled={isSubmitting}
               />
               <p className="text-xs text-muted-foreground">
                 Be as detailed as possible. This will help the arbitrator understand your case.
@@ -166,6 +204,7 @@ const ArbitrationFileDispute = ({ onBack }: ArbitrationFileDisputeProps) => {
                 accept=".pdf,.jpg,.jpeg,.png,.xlsx,.xls,.doc,.docx"
                 onChange={handleFileChange}
                 className="max-w-xs mx-auto"
+                disabled={isSubmitting}
               />
             </div>
 
@@ -208,6 +247,7 @@ const ArbitrationFileDispute = ({ onBack }: ArbitrationFileDisputeProps) => {
                 checked={formData.confidential}
                 onChange={(e) => setFormData({ ...formData, confidential: e.target.checked })}
                 className="mt-1"
+                disabled={isSubmitting}
               />
               <div>
                 <Label htmlFor="confidential" className="cursor-pointer">
@@ -223,13 +263,13 @@ const ArbitrationFileDispute = ({ onBack }: ArbitrationFileDisputeProps) => {
 
         {/* Actions */}
         <div className="flex items-center justify-between pt-6 border-t border-border">
-          <Button type="button" variant="outline" onClick={onBack}>
+          <Button type="button" variant="outline" onClick={onBack} disabled={isSubmitting}>
             Cancel
           </Button>
           <div className="flex items-center gap-4">
             <p className="text-sm text-muted-foreground">Filing fee: $250</p>
-            <Button type="submit" className="shadow-glow">
-              Submit Dispute
+            <Button type="submit" className="shadow-glow" disabled={isSubmitting}>
+              {isSubmitting ? "Submitting..." : "Submit Dispute"}
             </Button>
           </div>
         </div>

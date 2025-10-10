@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Home, FileText, Gavel, MessageSquare, Wallet, Settings, LogOut, Archive, Shield } from "lucide-react";
+import { Home, FileText, Gavel, MessageSquare, Wallet, Settings, LogOut, Archive, Shield, Loader2 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import CompanyOverview from "@/components/dashboard/CompanyOverview";
 import ProposalsView from "@/components/dashboard/ProposalsView";
@@ -18,6 +18,24 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const { user, walletAddress, signOut } = useAuth();
   const [currentView, setCurrentView] = useState<View>("overview");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Simulate initial data loading
+    const timer = setTimeout(() => {
+      // In a real app, you would fetch initial data here
+      // For now, we'll just simulate a loading time
+      setLoading(false);
+    }, 1500);
+
+    // Handle potential errors, e.g., if wallet is not connected
+    if (!walletAddress) {
+      // setError("Wallet not connected. Some features may be disabled.");
+    }
+
+    return () => clearTimeout(timer);
+  }, [walletAddress]);
 
   const handleSignOut = async () => {
     await signOut();
@@ -61,6 +79,7 @@ const Dashboard = () => {
               variant={currentView === item.id ? "default" : "ghost"}
               className="w-full justify-start"
               onClick={() => setCurrentView(item.id)}
+              disabled={loading} // Disable navigation while loading
             >
               <item.icon className="h-4 w-4 mr-3" />
               {item.label}
@@ -82,22 +101,29 @@ const Dashboard = () => {
 
       {/* Main Content */}
       <main className="flex-1 overflow-auto">
-        <div className="p-8">
-          {currentView === "overview" && <CompanyOverview />}
-          {currentView === "proposals" && <ProposalsView />}
-          {currentView === "decisions" && <DecisionsView />}
-          {currentView === "arbitration" && <ArbitrationView />}
-          {currentView === "chat" && <ChatView />}
-          {currentView === "treasury" && <TreasuryView />}
-          {currentView === "admin" && <AdminView />}
-          {currentView === "settings" && (
-            <div className="text-center py-12">
-              <Settings className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-xl font-semibold mb-2">Settings</h3>
-              <p className="text-muted-foreground">Configure your preferences here.</p>
-            </div>
-          )}
-        </div>
+        {loading ? (
+          <div className="flex items-center justify-center h-full">
+            <Loader2 className="h-12 w-12 text-primary animate-spin" />
+          </div>
+        ) : (
+          <div className="p-8">
+            {error && <div className="text-center py-4 text-destructive">{error}</div>}
+            {currentView === "overview" && <CompanyOverview />}
+            {currentView === "proposals" && <ProposalsView />}
+            {currentView === "decisions" && <DecisionsView />}
+            {currentView === "arbitration" && <ArbitrationView />}
+            {currentView === "chat" && <ChatView />}
+            {currentView === "treasury" && <TreasuryView />}
+            {currentView === "admin" && <AdminView />}
+            {currentView === "settings" && (
+              <div className="text-center py-12">
+                <Settings className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-xl font-semibold mb-2">Settings</h3>
+                <p className="text-muted-foreground">Configure your preferences here.</p>
+              </div>
+            )}
+          </div>
+        )}
       </main>
     </div>
   );
