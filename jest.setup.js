@@ -1,2 +1,2 @@
-import dotenv from 'dotenv';
-dotenv.config({ path: './.env.test' });
+require('dotenv').config({ path: './.env.test' });
+import 'whatwg-fetch';
