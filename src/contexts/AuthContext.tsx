@@ -1,16 +1,22 @@
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { Session, User } from '@supabase/supabase-js';
-import { supabase } from '../lib/supabaseClient.js';
+import { useRouter } from 'next/router';
 import { connectWallet as web3Connect } from '@/lib/web3';
+import jwt_decode from 'jwt-decode';
+
+interface User {
+  id: string;
+  email: string;
+  roles: string[];
+}
 
 interface AuthContextType {
   user: User | null;
-  session: Session | null;
   walletAddress: string | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string) => Promise<void>;
-  signOut: () => Promise<void>;
+  signOut: () => void;
   connectWallet: () => Promise<string>;
   disconnectWallet: () => void;
 }
@@ -27,53 +33,66 @@ export const useAuth = () => {
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
-    const getSession = async () => {
-      const { data } = await supabase.auth.getSession();
-      setSession(data.session);
-      setUser(data.session?.user ?? null);
-      setLoading(false);
+    const token = localStorage.getItem('token');
+    if (token) {
+      const decoded: any = jwt_decode(token);
+      setUser({ id: decoded.userId, email: decoded.email, roles: decoded.roles });
     }
-
-    getSession();
-
-
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        setLoading(false);
-      }
-    );
+    setLoading(false);
 
     const savedWallet = localStorage.getItem('walletAddress');
     if (savedWallet) {
       setWalletAddress(savedWallet);
     }
-
-    return () => {
-      authListener?.subscription.unsubscribe();
-    };
   }, []);
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) throw error;
+    const res = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
+    });
+
+    if (res.ok) {
+      const { token } = await res.json();
+      localStorage.setItem('token', token);
+      const decoded: any = jwt_decode(token);
+      setUser({ id: decoded.userId, email: decoded.email, roles: decoded.roles });
+      router.push('/');
+    } else {
+      throw new Error('Login failed');
+    }
   };
 
   const signUp = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signUp({ email, password });
-    if (error) throw error;
+    const res = await fetch('/api/auth/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
+    });
+
+    if (res.ok) {
+      router.push('/auth'); // Redirect to login page after successful registration
+    } else {
+      throw new Error('Registration failed');
+    }
   };
 
-  const signOut = async () => {
-    await supabase.auth.signOut();
+  const signOut = () => {
+    localStorage.removeItem('token');
+    setUser(null);
     setWalletAddress(null);
     localStorage.removeItem('walletAddress');
+    router.push('/auth');
   };
 
   const connectWallet = async () => {
@@ -90,7 +109,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const value = {
     user,
-    session,
     walletAddress,
     loading,
     signIn,
