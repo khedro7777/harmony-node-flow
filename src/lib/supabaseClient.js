@@ -1,3 +1,4 @@
+
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -14,10 +15,25 @@ export async function signInWithEmail(email, password) {
   return data;
 }
 
-export async function getContracts() {
-  const { data, error } = await supabase
-    .from('contracts')
-    .select('*');
+export async function signUpWithEmail(email, password) {
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password
+  });
   if (error) throw error;
+  return data;
+}
+
+export async function updateUserWallet(userId, walletAddress) {
+  const { data, error } = await supabase
+    .from('users')
+    .update({ wallet: walletAddress })
+    .eq('id', userId)
+    .select();
+
+  if (error) {
+    console.error('Error updating wallet:', error);
+    throw error;
+  }
   return data;
 }
