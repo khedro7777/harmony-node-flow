@@ -6,23 +6,36 @@ const CodeGraph = () => {
   const [log, setLog] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
 
+  const fetchGitLog = async () => {
+    try {
+      const commits = await git.log({
+        fs: {} as any, // git.log does not require fs with http
+        http,
+        dir: '.',
+        depth: 10,
+        corsProxy: 'http://localhost:8080'
+      });
+      setLog(commits);
+    } catch (e: any) {
+      setError(e.message);
+    }
+  };
+
   useEffect(() => {
-    const fetchGitLog = async () => {
-      try {
-        const commits = await git.log({
-          fs: {} as any, // git.log does not require fs with http
-          http,
-          dir: '.',
-          depth: 10,
-          corsProxy: 'http://localhost:8080'
-        });
-        setLog(commits);
-      } catch (e: any) {
-        setError(e.message);
+    fetchGitLog();
+
+    const ws = new WebSocket('ws://localhost:3001');
+
+    ws.onmessage = (event) => {
+      const message = JSON.parse(event.data);
+      if (message.type === 'git-update') {
+        fetchGitLog();
       }
     };
 
-    fetchGitLog();
+    return () => {
+      ws.close();
+    };
   }, []);
 
   if (error) {

@@ -13,10 +13,6 @@ const ArbitrationView = () => {
   const [disputes, setDisputes] = useState<any[]>([]);
   const [newDispute, setNewDispute] = useState({ title: '', description: '' });
 
-  useEffect(() => {
-    fetchDisputes();
-  }, []);
-
   const fetchDisputes = async () => {
     try {
       const response = await fetch('/api/disputes');
@@ -30,6 +26,23 @@ const ArbitrationView = () => {
       toast({ title: 'Error', description: 'Could not fetch disputes.', variant: 'destructive' });
     }
   };
+
+  useEffect(() => {
+    fetchDisputes();
+
+    const ws = new WebSocket('ws://localhost:3001');
+
+    ws.onmessage = (event) => {
+      const message = JSON.parse(event.data);
+      if (message.type === 'dispute-created') {
+        fetchDisputes();
+      }
+    };
+
+    return () => {
+      ws.close();
+    };
+  }, []);
 
   const handleCreateDispute = async () => {
     try {
@@ -47,7 +60,7 @@ const ArbitrationView = () => {
 
       const result = await response.json();
       toast({ title: 'Dispute Created', description: `Dispute ID: ${result.disputeId}` });
-      fetchDisputes(); // Refresh the list of disputes
+      // No longer need to call fetchDisputes() here, as the WebSocket will trigger it.
     } catch (error) {
       console.error(error);
       toast({ title: 'Error', description: 'Could not create dispute.', variant: 'destructive' });

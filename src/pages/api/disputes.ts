@@ -1,5 +1,6 @@
 import clientPromise from "@/lib/mongodb";
 import { NextApiRequest, NextApiResponse } from "next";
+import { broadcast } from "@/integrations/web-socket";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const client = await clientPromise;
@@ -10,6 +11,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       try {
         const newDispute = req.body;
         const result = await db.collection("cases").insertOne(newDispute);
+        broadcast({ type: "dispute-created" });
         res.status(201).json({ message: "Dispute created successfully", disputeId: result.insertedId });
       } catch (error) {
         console.error(error);

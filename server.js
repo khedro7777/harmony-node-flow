@@ -1,9 +1,13 @@
-const { exec } = require('child_process');
+import express from 'express';
+import { createServer } from 'http';
+import { setupWebSocket } from './src/integrations/web-socket.js';
 
-exec('node git-http-backend.bundle.js', (err, stdout, stderr) => {
-  if (err) {
-    console.error(err);
-    return;
-  }
-  console.log(stdout);
+const app = express();
+const server = createServer(app);
+const wss = setupWebSocket(server);
+
+app.use(express.static('dist'));
+
+server.listen(3001, () => {
+  console.log('Server is listening on port 3001');
 });
