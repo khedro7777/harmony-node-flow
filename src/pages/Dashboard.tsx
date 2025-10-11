@@ -175,7 +175,7 @@ const Dashboard = () => {
             </motion.div>
           )}
         </AnimatePresence>
-      </main>
+      </motion.main>
     </div>
   );
 };
