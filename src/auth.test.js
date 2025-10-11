@@ -3,12 +3,20 @@ import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react';
 import { AuthProvider, useAuth } from './contexts/AuthContext.tsx';
 
-jest.mock('firebase/auth', () => ({
-  ...jest.requireActual('firebase/auth'),
-  createUserWithEmailAndPassword: jest.fn().mockResolvedValue({
-    user: { uid: '123', email: 'test@example.com' },
-  }),
-  sendEmailVerification: jest.fn().mockResolvedValue(undefined),
+// Mock the supabase client
+jest.mock('./lib/supabaseClient.js', () => ({
+  supabase: {
+    auth: {
+      signUp: jest.fn().mockResolvedValue({ error: null }),
+      getSession: jest.fn().mockResolvedValue({ data: { session: null } }),
+      onAuthStateChange: jest.fn().mockReturnValue({ data: { subscription: { unsubscribe: jest.fn() } } }),
+    },
+  },
+}));
+
+// Mock the web3 connectWallet function
+jest.mock('@/lib/web3', () => ({
+    connectWallet: jest.fn()
 }));
 
 const TestComponent = () => {
@@ -27,7 +35,13 @@ const TestComponent = () => {
 };
 
 describe('AuthProvider', () => {
-  it('should sign up a new user and send a verification email', async () => {
+  beforeAll(() => {
+    // Mock window.alert
+    window.alert = jest.fn();
+  });
+
+  it('should sign up a new user using Supabase', async () => {
+    const { supabase } = require('./lib/supabaseClient.js');
     const { getByText } = render(
       <AuthProvider>
         <TestComponent />
@@ -36,12 +50,11 @@ describe('AuthProvider', () => {
 
     fireEvent.click(getByText('Sign Up'));
 
-    await waitFor(() => expect(require('firebase/auth').createUserWithEmailAndPassword).toHaveBeenCalledWith(
-      expect.any(Object), // This is the auth object
-      'test@example.com',
-      'password123'
-    ));
+    await waitFor(() => expect(supabase.auth.signUp).toHaveBeenCalledWith({
+      email: 'test@example.com',
+      password: 'password123'
+    }));
 
-    await waitFor(() => expect(require('firebase/auth').sendEmailVerification).toHaveBeenCalled());
+    await waitFor(() => expect(window.alert).toHaveBeenCalledWith('Sign-up successful'));
   });
 });
