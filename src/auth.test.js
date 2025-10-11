@@ -1,10 +1,8 @@
-import { signUpWithEmail, updateUserWallet } from './lib/supabaseClient.js';
+import { signUpWithEmail, updateUserWallet } from './lib/supabaseClient.ts';
 
-jest.mock('dotenv/config', () => ({}));
-
-jest.mock('./lib/supabaseClient.js', () => ({
+jest.mock('./lib/supabaseClient.ts', () => ({
   __esModule: true,
-  ...jest.requireActual('./lib/supabaseClient.js'),
+  ...jest.requireActual('./lib/supabaseClient.ts'),
   supabase: {
     auth: {
       signUp: jest.fn().mockResolvedValue({ data: { user: { id: '123' } }, error: null }),
