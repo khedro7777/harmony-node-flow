@@ -3,129 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { FileCheck, Clock, CheckCircle2, XCircle, Users, Calendar } from "lucide-react";
-import { useState, useEffect } from "react";
-import { db } from "@/lib/firebase";
-import { collection, getDocs } from "firebase/firestore";
-
-interface Proposal {
-  id: string;
-  title: string;
-  description: string;
-  type: string;
-  status: "active" | "approved" | "rejected";
-  votes: { for: number; against: number };
-  totalVoters: number;
-  timeLeft: string;
-  author: string;
-  created: string;
-}
 
 const ProposalsView = () => {
-  const [proposals, setProposals] = useState<Proposal[]>([]);
-  const [proposalStats, setProposalStats] = useState([
-    {
-      label: "Active",
-      value: "0",
-      icon: Clock,
-      color: "bg-warning",
-    },
-    {
-      label: "Approved",
-      value: "0",
-      icon: CheckCircle2,
-      color: "bg-success",
-    },
-    {
-      label: "Rejected",
-      value: "0",
-      icon: XCircle,
-      color: "bg-destructive",
-    },
-    {
-      label: "Total",
-      value: "0",
-      icon: FileCheck,
-      color: "gradient-primary",
-    },
-  ]);
-
-  useEffect(() => {
-    const fetchProposals = async () => {
-      try {
-        const proposalsCollection = collection(db, "proposals");
-        const proposalSnapshot = await getDocs(proposalsCollection);
-        const proposalsList = proposalSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Proposal));
-        setProposals(proposalsList);
-
-        // Calculate stats
-        const active = proposalsList.filter(p => p.status === 'active').length;
-        const approved = proposalsList.filter(p => p.status === 'approved').length;
-        const rejected = proposalsList.filter(p => p.status === 'rejected').length;
-        const total = proposalsList.length;
-
-        setProposalStats([
-          {
-            label: "Active",
-            value: active.toString(),
-            icon: Clock,
-            color: "bg-warning",
-          },
-          {
-            label: "Approved",
-            value: approved.toString(),
-            icon: CheckCircle2,
-            color: "bg-success",
-          },
-          {
-            label: "Rejected",
-            value: rejected.toString(),
-            icon: XCircle,
-            color: "bg-destructive",
-          },
-          {
-            label: "Total",
-            value: total.toString(),
-            icon: FileCheck,
-            color: "gradient-primary",
-          },
-        ]);
-
-      } catch (error) {
-        console.error("Error fetching proposals: ", error);
-        // Fallback to dummy data if firebase is not configured
-        setProposals(dummyProposals);
-        setProposalStats([
-            {
-                label: "Active",
-                value: "5",
-                icon: Clock,
-                color: "bg-warning",
-            },
-            {
-                label: "Approved",
-                value: "34",
-                icon: CheckCircle2,
-                color: "bg-success",
-            },
-            {
-                label: "Rejected",
-                value: "8",
-                icon: XCircle,
-                color: "bg-destructive",
-            },
-            {
-                label: "Total",
-                value: "47",
-                icon: FileCheck,
-                color: "gradient-primary",
-            },
-        ]);
-      }
-    };
-
-    fetchProposals();
-  }, []);
-
   return (
     <div className="space-y-6">
       {/* Stats Overview */}
@@ -252,67 +131,94 @@ const ProposalsView = () => {
   );
 };
 
-const dummyProposals: Proposal[] = [
-    {
-      id: "1",
-      title: "Q1 2025 Budget Allocation",
-      description: "Proposal to allocate $500K for product development and $300K for marketing initiatives in Q1.",
-      type: "governance",
-      status: "active",
-      votes: { for: 18, against: 3 },
-      totalVoters: 24,
-      timeLeft: "2 days left",
-      author: "Sarah Johnson",
-      created: "Feb 8, 2025",
-    },
-    {
-      id: "2",
-      title: "New Board Member Nomination",
-      description: "Nominate Michael Chen as a new board member with expertise in blockchain technology.",
-      type: "governance",
-      status: "active",
-      votes: { for: 15, against: 5 },
-      totalVoters: 24,
-      timeLeft: "5 days left",
-      author: "David Park",
-      created: "Feb 7, 2025",
-    },
-    {
-      id: "3",
-      title: "Smart Contract Upgrade v2.1",
-      description: "Deploy upgraded governance smart contract with improved gas optimization.",
-      type: "contract",
-      status: "active",
-      votes: { for: 12, against: 2 },
-      totalVoters: 24,
-      timeLeft: "1 day left",
-      author: "Tech Team",
-      created: "Feb 9, 2025",
-    },
-    {
-      id: "4",
-      title: "Annual Dividend Distribution",
-      description: "Approve $2M dividend distribution to shareholders based on ownership percentage.",
-      type: "financial",
-      status: "approved",
-      votes: { for: 21, against: 2 },
-      totalVoters: 24,
-      timeLeft: "Ended",
-      author: "Finance Team",
-      created: "Jan 28, 2025",
-    },
-    {
-      id: "5",
-      title: "Office Lease Extension",
-      description: "Extend current office lease for 3 years at $15K/month.",
-      type: "operational",
-      status: "rejected",
-      votes: { for: 8, against: 15 },
-      totalVoters: 24,
-      timeLeft: "Ended",
-      author: "Operations",
-      created: "Jan 25, 2025",
-    },
-  ];
+const proposalStats = [
+  {
+    label: "Active",
+    value: "5",
+    icon: Clock,
+    color: "bg-warning",
+  },
+  {
+    label: "Approved",
+    value: "34",
+    icon: CheckCircle2,
+    color: "bg-success",
+  },
+  {
+    label: "Rejected",
+    value: "8",
+    icon: XCircle,
+    color: "bg-destructive",
+  },
+  {
+    label: "Total",
+    value: "47",
+    icon: FileCheck,
+    color: "gradient-primary",
+  },
+];
+
+const proposals = [
+  {
+    id: 1,
+    title: "Q1 2025 Budget Allocation",
+    description: "Proposal to allocate $500K for product development and $300K for marketing initiatives in Q1.",
+    type: "governance",
+    status: "active",
+    votes: { for: 18, against: 3 },
+    totalVoters: 24,
+    timeLeft: "2 days left",
+    author: "Sarah Johnson",
+    created: "Feb 8, 2025",
+  },
+  {
+    id: 2,
+    title: "New Board Member Nomination",
+    description: "Nominate Michael Chen as a new board member with expertise in blockchain technology.",
+    type: "governance",
+    status: "active",
+    votes: { for: 15, against: 5 },
+    totalVoters: 24,
+    timeLeft: "5 days left",
+    author: "David Park",
+    created: "Feb 7, 2025",
+  },
+  {
+    id: 3,
+    title: "Smart Contract Upgrade v2.1",
+    description: "Deploy upgraded governance smart contract with improved gas optimization.",
+    type: "contract",
+    status: "active",
+    votes: { for: 12, against: 2 },
+    totalVoters: 24,
+    timeLeft: "1 day left",
+    author: "Tech Team",
+    created: "Feb 9, 2025",
+  },
+  {
+    id: 4,
+    title: "Annual Dividend Distribution",
+    description: "Approve $2M dividend distribution to shareholders based on ownership percentage.",
+    type: "financial",
+    status: "approved",
+    votes: { for: 21, against: 2 },
+    totalVoters: 24,
+    timeLeft: "Ended",
+    author: "Finance Team",
+    created: "Jan 28, 2025",
+  },
+  {
+    id: 5,
+    title: "Office Lease Extension",
+    description: "Extend current office lease for 3 years at $15K/month.",
+    type: "operational",
+    status: "rejected",
+    votes: { for: 8, against: 15 },
+    totalVoters: 24,
+    timeLeft: "Ended",
+    author: "Operations",
+    created: "Jan 25, 2025",
+  },
+];
 
 export default ProposalsView;

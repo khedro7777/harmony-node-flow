@@ -1,14 +1,24 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
+import { 
+  User,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signOut as firebaseSignOut,
+  onAuthStateChanged,
+  sendEmailVerification
+} from 'firebase/auth';
+import { auth } from '@/lib/firebase';
 import { connectWallet as web3Connect } from '@/lib/web3';
 
 interface AuthContextType {
+  user: User | null;
   walletAddress: string | null;
   loading: boolean;
+  signIn: (email: string, password: string) => Promise<void>;
+  signUp: (email: string, password: string) => Promise<void>;
+  signOut: () => Promise<void>;
   connectWallet: () => Promise<string>;
   disconnectWallet: () => void;
-  signOut: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -16,49 +26,67 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error('useAuth must be used within AuthProvider');
   }
   return context;
 };
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [user, setUser] = useState<User | null>(null);
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
 
   useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user);
+      setLoading(false);
+    });
+
+    // Check for saved wallet address
     const savedWallet = localStorage.getItem('walletAddress');
     if (savedWallet) {
       setWalletAddress(savedWallet);
     }
-    setLoading(false);
+
+    return unsubscribe;
   }, []);
 
-  const signOut = () => {
-    localStorage.removeItem('walletAddress');
+  const signIn = async (email: string, password: string) => {
+    await signInWithEmailAndPassword(auth, email, password);
+  };
+
+  const signUp = async (email: string, password: string) => {
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    await sendEmailVerification(userCredential.user);
+  };
+
+  const signOut = async () => {
+    await firebaseSignOut(auth);
     setWalletAddress(null);
-    router.push('/Auth');
+    localStorage.removeItem('walletAddress');
   };
 
   const connectWallet = async () => {
     const { address } = await web3Connect();
     setWalletAddress(address);
     localStorage.setItem('walletAddress', address);
-    // You can add logic here to sign a message and authenticate with a backend if needed
     return address;
   };
 
   const disconnectWallet = () => {
-    localStorage.removeItem('walletAddress');
     setWalletAddress(null);
+    localStorage.removeItem('walletAddress');
   };
 
   const value = {
+    user,
     walletAddress,
     loading,
-    connectWallet,
-    disconnectWallet,
+    signIn,
+    signUp,
     signOut,
+    connectWallet,
+    disconnectWallet
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
