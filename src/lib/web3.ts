@@ -1,5 +1,11 @@
 import { ethers } from 'ethers';
 
+declare global {
+  interface Window {
+    ethereum?: any;
+  }
+}
+
 export const connectWallet = async () => {
   if (typeof window.ethereum === 'undefined') {
     throw new Error('MetaMask is not installed');
