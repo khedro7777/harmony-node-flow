@@ -16,10 +16,10 @@ const Index = () => {
             <a href="#features" className="text-sm text-muted-foreground hover:text-foreground animate-smooth">Features</a>
             <a href="#how-it-works" className="text-sm text-muted-foreground hover:text-foreground animate-smooth">How It Works</a>
             <a href="#pricing" className="text-sm text-muted-foreground hover:text-foreground animate-smooth">Pricing</a>
-            <Link to="/auth">
+            <Link to="/dashboard">
               <Button variant="ghost" size="sm">Sign In</Button>
             </Link>
-            <Link to="/auth">
+            <Link to="/dashboard">
               <Button size="sm" className="shadow-glow">
                 Get Started <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
@@ -46,7 +46,7 @@ const Index = () => {
               Form companies, manage shareholders, vote on proposals, and resolve disputes—all in one transparent, Web3-powered platform.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/auth">
+              <Link to="/dashboard">
                 <Button size="lg" className="shadow-glow text-lg px-8">
                   Create Your Company <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
@@ -161,7 +161,7 @@ const Index = () => {
                     </li>
                   ))}
                 </ul>
-                <Link to="/auth">
+                <Link to="/dashboard">
                   <Button className="w-full" variant={plan.featured ? "default" : "outline"} size="lg">
                     Get Started
                   </Button>
@@ -180,7 +180,7 @@ const Index = () => {
           <p className="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto">
             Join leading companies using decentralized governance for transparency and efficiency.
           </p>
-          <Link to="/auth">
+          <Link to="/dashboard">
             <Button size="lg" className="shadow-glow text-lg px-8">
               Create Your Company Now <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
