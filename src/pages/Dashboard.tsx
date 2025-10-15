@@ -1,137 +1,104 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  LayoutDashboard, 
-  FileCheck, 
-  Gavel, 
-  Users, 
-  Wallet, 
-  MessageSquare,
-  Shield,
-  Menu,
-  Bell,
-  Search,
-  Plus
-} from "lucide-react";
-import { Link } from "react-router-dom";
+import { Badge } from "@/components/ui/badge";
+import { Home, FileText, Gavel, MessageSquare, Wallet, Settings, LogOut, Archive, Shield } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 import CompanyOverview from "@/components/dashboard/CompanyOverview";
 import ProposalsView from "@/components/dashboard/ProposalsView";
 import ArbitrationView from "@/components/dashboard/ArbitrationView";
+import ChatView from "@/components/dashboard/ChatView";
+import TreasuryView from "@/components/dashboard/TreasuryView";
+import AdminView from "@/components/dashboard/AdminView";
+import DecisionsView from "@/components/dashboard/DecisionsView";
+
+type View = "overview" | "proposals" | "arbitration" | "chat" | "treasury" | "decisions" | "admin" | "settings";
 
 const Dashboard = () => {
-  const [activeTab, setActiveTab] = useState("overview");
+  const navigate = useNavigate();
+  const { user, walletAddress, signOut } = useAuth();
+  const [currentView, setCurrentView] = useState<View>("overview");
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/");
+  };
+
+  const menuItems = [
+    { id: "overview" as View, label: "Overview", icon: Home },
+    { id: "proposals" as View, label: "Proposals", icon: FileText },
+    { id: "decisions" as View, label: "Decisions", icon: Archive },
+    { id: "arbitration" as View, label: "Arbitration", icon: Gavel },
+    { id: "chat" as View, label: "Chat", icon: MessageSquare },
+    { id: "treasury" as View, label: "Treasury", icon: Wallet },
+    { id: "admin" as View, label: "Admin", icon: Shield },
+    { id: "settings" as View, label: "Settings", icon: Settings },
+  ];
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Top Navigation */}
-      <nav className="border-b border-border bg-card/50 backdrop-blur-lg sticky top-0 z-50">
-        <div className="container mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-6">
-            <Link to="/" className="flex items-center gap-2">
-              <Shield className="h-7 w-7 text-primary" />
-              <span className="text-lg font-bold">GPO DAO Board</span>
-            </Link>
-            <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-muted rounded-lg">
-              <Search className="h-4 w-4 text-muted-foreground" />
-              <input
-                type="text"
-                placeholder="Search..."
-                className="bg-transparent border-none outline-none text-sm w-64"
-              />
-            </div>
-          </div>
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon">
-              <Bell className="h-5 w-5" />
-            </Button>
-            <Button variant="outline" size="sm">
-              <Wallet className="h-4 w-4 mr-2" />
-              Connect Wallet
-            </Button>
-            <Button variant="ghost" size="icon" className="md:hidden">
-              <Menu className="h-5 w-5" />
-            </Button>
-          </div>
+    <div className="flex min-h-screen bg-background">
+      {/* Sidebar */}
+      <aside className="w-64 border-r border-border bg-card p-6 flex flex-col">
+        <div className="mb-8">
+          <h1 className="text-2xl font-bold gradient-text">GPO DAO</h1>
+          <p className="text-sm text-muted-foreground mt-1">Decentralized Governance</p>
         </div>
-      </nav>
 
-      <div className="container mx-auto px-6 py-8">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-3xl font-bold mb-2">Acme Corporation</h1>
-            <p className="text-muted-foreground">Delaware C-Corp • Founded Jan 2025</p>
-          </div>
-          <Button className="shadow-glow">
-            <Plus className="h-4 w-4 mr-2" />
-            New Proposal
+        {/* User Info */}
+        <div className="mb-6 p-4 rounded-lg bg-muted/50">
+          <p className="text-sm font-medium mb-1">{user?.email}</p>
+          {walletAddress && (
+            <Badge variant="outline" className="text-xs font-mono">
+              {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
+            </Badge>
+          )}
+        </div>
+
+        <nav className="space-y-2 flex-1">
+          {menuItems.map((item) => (
+            <Button
+              key={item.id}
+              variant={currentView === item.id ? "default" : "ghost"}
+              className="w-full justify-start"
+              onClick={() => setCurrentView(item.id)}
+            >
+              <item.icon className="h-4 w-4 mr-3" />
+              {item.label}
+            </Button>
+          ))}
+        </nav>
+
+        <div className="pt-6 border-t border-border">
+          <Button 
+            variant="ghost" 
+            className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10"
+            onClick={handleSignOut}
+          >
+            <LogOut className="h-4 w-4 mr-3" />
+            Logout
           </Button>
         </div>
+      </aside>
 
-        {/* Main Navigation Tabs */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="bg-muted/50 p-1 h-auto flex-wrap">
-            <TabsTrigger value="overview" className="gap-2">
-              <LayoutDashboard className="h-4 w-4" />
-              Overview
-            </TabsTrigger>
-            <TabsTrigger value="proposals" className="gap-2">
-              <FileCheck className="h-4 w-4" />
-              Proposals
-            </TabsTrigger>
-            <TabsTrigger value="arbitration" className="gap-2">
-              <Gavel className="h-4 w-4" />
-              Arbitration
-            </TabsTrigger>
-            <TabsTrigger value="shareholders" className="gap-2">
-              <Users className="h-4 w-4" />
-              Shareholders
-            </TabsTrigger>
-            <TabsTrigger value="treasury" className="gap-2">
-              <Wallet className="h-4 w-4" />
-              Treasury
-            </TabsTrigger>
-            <TabsTrigger value="chat" className="gap-2">
-              <MessageSquare className="h-4 w-4" />
-              Chat
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="overview" className="space-y-6">
-            <CompanyOverview />
-          </TabsContent>
-
-          <TabsContent value="proposals" className="space-y-6">
-            <ProposalsView />
-          </TabsContent>
-
-          <TabsContent value="arbitration" className="space-y-6">
-            <ArbitrationView />
-          </TabsContent>
-
-          <TabsContent value="shareholders" className="space-y-6">
-            <Card className="p-6">
-              <h2 className="text-xl font-semibold mb-4">Shareholders</h2>
-              <p className="text-muted-foreground">Shareholder management coming soon...</p>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="treasury" className="space-y-6">
-            <Card className="p-6">
-              <h2 className="text-xl font-semibold mb-4">Treasury</h2>
-              <p className="text-muted-foreground">Treasury management coming soon...</p>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="chat" className="space-y-6">
-            <Card className="p-6">
-              <h2 className="text-xl font-semibold mb-4">Team Chat</h2>
-              <p className="text-muted-foreground">Chat functionality coming soon...</p>
-            </Card>
-          </TabsContent>
-        </Tabs>
-      </div>
+      {/* Main Content */}
+      <main className="flex-1 overflow-auto">
+        <div className="p-8">
+          {currentView === "overview" && <CompanyOverview />}
+          {currentView === "proposals" && <ProposalsView />}
+          {currentView === "decisions" && <DecisionsView />}
+          {currentView === "arbitration" && <ArbitrationView />}
+          {currentView === "chat" && <ChatView />}
+          {currentView === "treasury" && <TreasuryView />}
+          {currentView === "admin" && <AdminView />}
+          {currentView === "settings" && (
+            <div className="text-center py-12">
+              <Settings className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-xl font-semibold mb-2">Settings</h3>
+              <p className="text-muted-foreground">Configure your preferences here.</p>
+            </div>
+          )}
+        </div>
+      </main>
     </div>
   );
 };
