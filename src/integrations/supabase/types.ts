@@ -14,7 +14,292 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      arbitration_cases: {
+        Row: {
+          arbitrator_id: string | null
+          company_id: string
+          created_at: string | null
+          description: string
+          evidence_ipfs_hash: string | null
+          filed_at: string | null
+          filed_by: string
+          id: string
+          respondent_id: string | null
+          ruling: string | null
+          ruling_issued_at: string | null
+          status: Database["public"]["Enums"]["arbitration_status"] | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          arbitrator_id?: string | null
+          company_id: string
+          created_at?: string | null
+          description: string
+          evidence_ipfs_hash?: string | null
+          filed_at?: string | null
+          filed_by: string
+          id?: string
+          respondent_id?: string | null
+          ruling?: string | null
+          ruling_issued_at?: string | null
+          status?: Database["public"]["Enums"]["arbitration_status"] | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          arbitrator_id?: string | null
+          company_id?: string
+          created_at?: string | null
+          description?: string
+          evidence_ipfs_hash?: string | null
+          filed_at?: string | null
+          filed_by?: string
+          id?: string
+          respondent_id?: string | null
+          ruling?: string | null
+          ruling_issued_at?: string | null
+          status?: Database["public"]["Enums"]["arbitration_status"] | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "arbitration_cases_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      companies: {
+        Row: {
+          company_type: string
+          created_at: string | null
+          description: string | null
+          formation_date: string | null
+          id: string
+          jurisdiction: string | null
+          logo_url: string | null
+          name: string
+          status: Database["public"]["Enums"]["company_status"] | null
+          updated_at: string | null
+          wallet_address: string | null
+        }
+        Insert: {
+          company_type: string
+          created_at?: string | null
+          description?: string | null
+          formation_date?: string | null
+          id?: string
+          jurisdiction?: string | null
+          logo_url?: string | null
+          name: string
+          status?: Database["public"]["Enums"]["company_status"] | null
+          updated_at?: string | null
+          wallet_address?: string | null
+        }
+        Update: {
+          company_type?: string
+          created_at?: string | null
+          description?: string | null
+          formation_date?: string | null
+          id?: string
+          jurisdiction?: string | null
+          logo_url?: string | null
+          name?: string
+          status?: Database["public"]["Enums"]["company_status"] | null
+          updated_at?: string | null
+          wallet_address?: string | null
+        }
+        Relationships: []
+      }
+      evidence_documents: {
+        Row: {
+          case_id: string
+          description: string | null
+          file_name: string
+          file_url: string
+          id: string
+          ipfs_hash: string | null
+          uploaded_at: string | null
+          uploaded_by: string
+        }
+        Insert: {
+          case_id: string
+          description?: string | null
+          file_name: string
+          file_url: string
+          id?: string
+          ipfs_hash?: string | null
+          uploaded_at?: string | null
+          uploaded_by: string
+        }
+        Update: {
+          case_id?: string
+          description?: string | null
+          file_name?: string
+          file_url?: string
+          id?: string
+          ipfs_hash?: string | null
+          uploaded_at?: string | null
+          uploaded_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "evidence_documents_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "arbitration_cases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      proposals: {
+        Row: {
+          approval_threshold: number | null
+          company_id: string
+          contract_address: string | null
+          created_at: string | null
+          created_by: string
+          description: string
+          id: string
+          ipfs_hash: string | null
+          proposal_type: string
+          quorum_required: number | null
+          status: Database["public"]["Enums"]["proposal_status"] | null
+          title: string
+          updated_at: string | null
+          voting_ends_at: string | null
+          voting_starts_at: string | null
+        }
+        Insert: {
+          approval_threshold?: number | null
+          company_id: string
+          contract_address?: string | null
+          created_at?: string | null
+          created_by: string
+          description: string
+          id?: string
+          ipfs_hash?: string | null
+          proposal_type: string
+          quorum_required?: number | null
+          status?: Database["public"]["Enums"]["proposal_status"] | null
+          title: string
+          updated_at?: string | null
+          voting_ends_at?: string | null
+          voting_starts_at?: string | null
+        }
+        Update: {
+          approval_threshold?: number | null
+          company_id?: string
+          contract_address?: string | null
+          created_at?: string | null
+          created_by?: string
+          description?: string
+          id?: string
+          ipfs_hash?: string | null
+          proposal_type?: string
+          quorum_required?: number | null
+          status?: Database["public"]["Enums"]["proposal_status"] | null
+          title?: string
+          updated_at?: string | null
+          voting_ends_at?: string | null
+          voting_starts_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "proposals_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      shareholders: {
+        Row: {
+          company_id: string
+          created_at: string | null
+          id: string
+          joined_at: string | null
+          role: Database["public"]["Enums"]["shareholder_role"] | null
+          share_count: number
+          user_id: string
+          voting_power: number
+          wallet_address: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string | null
+          id?: string
+          joined_at?: string | null
+          role?: Database["public"]["Enums"]["shareholder_role"] | null
+          share_count?: number
+          user_id: string
+          voting_power?: number
+          wallet_address: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string | null
+          id?: string
+          joined_at?: string | null
+          role?: Database["public"]["Enums"]["shareholder_role"] | null
+          share_count?: number
+          user_id?: string
+          voting_power?: number
+          wallet_address?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shareholders_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      votes: {
+        Row: {
+          choice: Database["public"]["Enums"]["vote_choice"]
+          id: string
+          proposal_id: string
+          signature: string | null
+          voted_at: string | null
+          voter_id: string
+          voting_power: number
+        }
+        Insert: {
+          choice: Database["public"]["Enums"]["vote_choice"]
+          id?: string
+          proposal_id: string
+          signature?: string | null
+          voted_at?: string | null
+          voter_id: string
+          voting_power: number
+        }
+        Update: {
+          choice?: Database["public"]["Enums"]["vote_choice"]
+          id?: string
+          proposal_id?: string
+          signature?: string | null
+          voted_at?: string | null
+          voter_id?: string
+          voting_power?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "votes_proposal_id_fkey"
+            columns: ["proposal_id"]
+            isOneToOne: false
+            referencedRelation: "proposals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +308,16 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      arbitration_status:
+        | "filed"
+        | "under_review"
+        | "hearing"
+        | "ruling_issued"
+        | "closed"
+      company_status: "pending" | "active" | "suspended" | "dissolved"
+      proposal_status: "draft" | "active" | "passed" | "rejected" | "executed"
+      shareholder_role: "founder" | "investor" | "employee" | "advisor"
+      vote_choice: "for" | "against" | "abstain"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +444,18 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      arbitration_status: [
+        "filed",
+        "under_review",
+        "hearing",
+        "ruling_issued",
+        "closed",
+      ],
+      company_status: ["pending", "active", "suspended", "dissolved"],
+      proposal_status: ["draft", "active", "passed", "rejected", "executed"],
+      shareholder_role: ["founder", "investor", "employee", "advisor"],
+      vote_choice: ["for", "against", "abstain"],
+    },
   },
 } as const
