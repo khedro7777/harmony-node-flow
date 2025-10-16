@@ -13,15 +13,20 @@ import {
   Menu,
   Bell,
   Search,
-  Plus
+  Plus,
+  LogOut
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { WalletConnect } from "@/components/dashboard/WalletConnect";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import CompanyOverview from "@/components/dashboard/CompanyOverview";
 import ProposalsView from "@/components/dashboard/ProposalsView";
 import ArbitrationView from "@/components/dashboard/ArbitrationView";
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState("overview");
+  const { user, signOut } = useAuth();
 
   return (
     <div className="min-h-screen bg-background">
@@ -46,10 +51,15 @@ const Dashboard = () => {
             <Button variant="ghost" size="icon">
               <Bell className="h-5 w-5" />
             </Button>
-            <Button variant="outline" size="sm">
-              <Wallet className="h-4 w-4 mr-2" />
-              Connect Wallet
+            <Button variant="outline" size="sm" onClick={signOut}>
+              <LogOut className="h-4 w-4 mr-2" />
+              Logout
             </Button>
+            <Avatar>
+              <AvatarFallback>
+                {user?.email?.charAt(0).toUpperCase() || 'U'}
+              </AvatarFallback>
+            </Avatar>
             <Button variant="ghost" size="icon" className="md:hidden">
               <Menu className="h-5 w-5" />
             </Button>
@@ -98,9 +108,12 @@ const Dashboard = () => {
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="overview" className="space-y-6">
-            <CompanyOverview />
-          </TabsContent>
+        <TabsContent value="overview" className="space-y-6">
+          <div className="mb-6">
+            <WalletConnect />
+          </div>
+          <CompanyOverview />
+        </TabsContent>
 
           <TabsContent value="proposals" className="space-y-6">
             <ProposalsView />
