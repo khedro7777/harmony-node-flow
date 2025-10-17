@@ -23,6 +23,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import CompanyOverview from "@/components/dashboard/CompanyOverview";
 import ProposalsView from "@/components/dashboard/ProposalsView";
 import ArbitrationView from "@/components/dashboard/ArbitrationView";
+import CompanyApplications from "@/components/dashboard/CompanyApplications";
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState("overview");
@@ -112,6 +113,7 @@ const Dashboard = () => {
           <div className="mb-6">
             <WalletConnect />
           </div>
+          <CompanyApplications />
           <CompanyOverview />
         </TabsContent>
 

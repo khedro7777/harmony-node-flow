@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Shield, Users, FileCheck, Gavel, Lock, Zap } from "lucide-react";
+import { ArrowRight, Shield, Users, FileCheck, Gavel, Lock, Zap, Building2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useEffect } from "react";
@@ -20,8 +20,8 @@ const Index = () => {
       <nav className="border-b border-border bg-card/50 backdrop-blur-lg sticky top-0 z-50">
         <div className="container mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Shield className="h-8 w-8 text-primary" />
-            <span className="text-xl font-bold">GPO DAO Board</span>
+            <Building2 className="h-8 w-8 text-primary" />
+            <span className="text-xl font-bold">GPO DAO</span>
           </div>
           <div className="hidden md:flex items-center gap-8">
             <a href="#features" className="text-sm text-muted-foreground hover:text-foreground animate-smooth">Features</a>
@@ -30,9 +30,9 @@ const Index = () => {
             <Link to="/auth">
               <Button variant="ghost" size="sm">Sign In</Button>
             </Link>
-            <Link to="/auth">
+            <Link to="/create-company">
               <Button size="sm" className="shadow-glow">
-                Get Started <ArrowRight className="ml-2 h-4 w-4" />
+                Create Company <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
           </div>
@@ -57,12 +57,17 @@ const Index = () => {
               Form companies, manage shareholders, vote on proposals, and resolve disputes—all in one transparent, Web3-powered platform.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/auth">
+              <Link to="/create-company">
                 <Button size="lg" className="shadow-glow text-lg px-8">
                   Create Your Company <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
-              <Button size="lg" variant="outline" className="text-lg px-8">
+              <Link to="/create-company">
+                <Button size="lg" variant="outline" className="text-lg px-8">
+                  Join as Service Provider
+                </Button>
+              </Link>
+              <Button size="lg" variant="ghost" className="text-lg px-8">
                 Watch Demo
               </Button>
             </div>
@@ -191,7 +196,7 @@ const Index = () => {
           <p className="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto">
             Join leading companies using decentralized governance for transparency and efficiency.
           </p>
-          <Link to="/auth">
+          <Link to="/create-company">
             <Button size="lg" className="shadow-glow text-lg px-8">
               Create Your Company Now <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
@@ -205,11 +210,11 @@ const Index = () => {
           <div className="grid md:grid-cols-4 gap-8">
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <Shield className="h-6 w-6 text-primary" />
-                <span className="font-bold">GPO DAO Board</span>
+                <Building2 className="h-6 w-6 text-primary" />
+                <span className="font-bold">GPO DAO</span>
               </div>
               <p className="text-sm text-muted-foreground">
-                Decentralized governance platform for modern companies.
+                Decentralized platform for company formation, governance & operation.
               </p>
             </div>
             <div>

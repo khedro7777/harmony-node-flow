@@ -115,6 +115,96 @@ export type Database = {
         }
         Relationships: []
       }
+      company_applications: {
+        Row: {
+          applicant_id: string
+          application_status: string | null
+          application_type: string
+          approved_at: string | null
+          business_description: string | null
+          company_id: string | null
+          company_name: string
+          company_type: string
+          completed_at: string | null
+          created_at: string | null
+          documents_uploaded: Json | null
+          id: string
+          jurisdiction: string
+          kyc_status: string | null
+          payment_status: string | null
+          payment_transaction_id: string | null
+          rejection_reason: string | null
+          service_provider_id: string | null
+          shareholders_info: Json
+          submitted_at: string | null
+          total_cost: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          applicant_id: string
+          application_status?: string | null
+          application_type: string
+          approved_at?: string | null
+          business_description?: string | null
+          company_id?: string | null
+          company_name: string
+          company_type: string
+          completed_at?: string | null
+          created_at?: string | null
+          documents_uploaded?: Json | null
+          id?: string
+          jurisdiction: string
+          kyc_status?: string | null
+          payment_status?: string | null
+          payment_transaction_id?: string | null
+          rejection_reason?: string | null
+          service_provider_id?: string | null
+          shareholders_info?: Json
+          submitted_at?: string | null
+          total_cost?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          applicant_id?: string
+          application_status?: string | null
+          application_type?: string
+          approved_at?: string | null
+          business_description?: string | null
+          company_id?: string | null
+          company_name?: string
+          company_type?: string
+          completed_at?: string | null
+          created_at?: string | null
+          documents_uploaded?: Json | null
+          id?: string
+          jurisdiction?: string
+          kyc_status?: string | null
+          payment_status?: string | null
+          payment_transaction_id?: string | null
+          rejection_reason?: string | null
+          service_provider_id?: string | null
+          shareholders_info?: Json
+          submitted_at?: string | null
+          total_cost?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_applications_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "company_applications_service_provider_id_fkey"
+            columns: ["service_provider_id"]
+            isOneToOne: false
+            referencedRelation: "service_providers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       evidence_documents: {
         Row: {
           case_id: string
@@ -244,6 +334,69 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      service_providers: {
+        Row: {
+          api_endpoint: string | null
+          api_key_hash: string | null
+          contact_email: string
+          contact_phone: string | null
+          country: string
+          created_at: string | null
+          description: string | null
+          id: string
+          is_active: boolean | null
+          is_verified: boolean | null
+          logo_url: string | null
+          name: string
+          pricing: Json | null
+          rating: number | null
+          services_offered: string[]
+          total_companies_formed: number | null
+          updated_at: string | null
+          website_url: string | null
+        }
+        Insert: {
+          api_endpoint?: string | null
+          api_key_hash?: string | null
+          contact_email: string
+          contact_phone?: string | null
+          country: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_verified?: boolean | null
+          logo_url?: string | null
+          name: string
+          pricing?: Json | null
+          rating?: number | null
+          services_offered?: string[]
+          total_companies_formed?: number | null
+          updated_at?: string | null
+          website_url?: string | null
+        }
+        Update: {
+          api_endpoint?: string | null
+          api_key_hash?: string | null
+          contact_email?: string
+          contact_phone?: string | null
+          country?: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_verified?: boolean | null
+          logo_url?: string | null
+          name?: string
+          pricing?: Json | null
+          rating?: number | null
+          services_offered?: string[]
+          total_companies_formed?: number | null
+          updated_at?: string | null
+          website_url?: string | null
+        }
+        Relationships: []
       }
       shareholders: {
         Row: {
