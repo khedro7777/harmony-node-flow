@@ -161,14 +161,14 @@ const CreateCompany = () => {
       }
 
       toast({
-        title: 'تم تسجيل الشركة بنجاح',
-        description: 'تم إضافة شركتك إلى المنصة'
+        title: 'Company Registered Successfully',
+        description: 'Your company has been added to the platform'
       });
 
       navigate('/dashboard');
     } catch (error: any) {
       toast({
-        title: 'خطأ',
+        title: 'Error',
         description: error.message,
         variant: 'destructive'
       });
@@ -217,14 +217,14 @@ const CreateCompany = () => {
       }
 
       toast({
-        title: 'تم إرسال الطلب بنجاح',
-        description: 'سيتم مراجعة طلبك من قبل مزود الخدمة'
+        title: 'Application Submitted Successfully',
+        description: 'Your application will be reviewed by the service provider'
       });
 
       navigate('/dashboard');
     } catch (error: any) {
       toast({
-        title: 'خطأ',
+        title: 'Error',
         description: error.message,
         variant: 'destructive'
       });
@@ -238,85 +238,85 @@ const CreateCompany = () => {
       <div className="container max-w-4xl mx-auto">
         <div className="text-center mb-8">
           <Building2 className="h-16 w-16 mx-auto mb-4 text-primary" />
-          <h1 className="text-4xl font-bold mb-2">إنشاء شركة جديدة</h1>
-          <p className="text-muted-foreground">اختر طريقة تسجيل شركتك على المنصة</p>
+          <h1 className="text-4xl font-bold mb-2">Create New Company</h1>
+          <p className="text-muted-foreground">Choose how to register your company on the platform</p>
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="existing">شركة موجودة</TabsTrigger>
-            <TabsTrigger value="new">تأسيس شركة جديدة</TabsTrigger>
+            <TabsTrigger value="existing">Existing Company</TabsTrigger>
+            <TabsTrigger value="new">Form New Company</TabsTrigger>
           </TabsList>
 
           <TabsContent value="existing">
             <Card>
               <CardHeader>
-                <CardTitle>تسجيل شركة موجودة</CardTitle>
+                <CardTitle>Register Existing Company</CardTitle>
                 <CardDescription>
-                  إذا كانت لديك شركة مسجلة بالفعل، يمكنك إضافتها مباشرة إلى المنصة
+                  If you already have a registered company, you can add it directly to the platform
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSubmitExisting} className="space-y-6">
                   <div className="space-y-4">
                     <div>
-                      <Label htmlFor="companyName">اسم الشركة *</Label>
+                      <Label htmlFor="companyName">Company Name *</Label>
                       <Input
                         id="companyName"
                         value={companyName}
                         onChange={(e) => setCompanyName(e.target.value)}
-                        placeholder="اسم شركتك"
+                        placeholder="Your company name"
                         required
                       />
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor="companyType">نوع الشركة *</Label>
+                        <Label htmlFor="companyType">Company Type *</Label>
                         <Select value={companyType} onValueChange={setCompanyType} required>
                           <SelectTrigger>
-                            <SelectValue placeholder="اختر النوع" />
+                            <SelectValue placeholder="Select type" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="LLC">شركة ذات مسؤولية محدودة</SelectItem>
-                            <SelectItem value="C-Corp">شركة مساهمة</SelectItem>
-                            <SelectItem value="S-Corp">شركة مساهمة صغيرة</SelectItem>
-                            <SelectItem value="Partnership">شراكة</SelectItem>
-                            <SelectItem value="Sole Proprietorship">مؤسسة فردية</SelectItem>
+                            <SelectItem value="LLC">Limited Liability Company</SelectItem>
+                            <SelectItem value="C-Corp">C-Corporation</SelectItem>
+                            <SelectItem value="S-Corp">S-Corporation</SelectItem>
+                            <SelectItem value="Partnership">Partnership</SelectItem>
+                            <SelectItem value="Sole Proprietorship">Sole Proprietorship</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
 
                       <div>
-                        <Label htmlFor="jurisdiction">الاختصاص القضائي *</Label>
+                        <Label htmlFor="jurisdiction">Jurisdiction *</Label>
                         <Select value={jurisdiction} onValueChange={setJurisdiction} required>
                           <SelectTrigger>
-                            <SelectValue placeholder="اختر الدولة" />
+                            <SelectValue placeholder="Select country" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="USA">الولايات المتحدة</SelectItem>
-                            <SelectItem value="UK">المملكة المتحدة</SelectItem>
-                            <SelectItem value="UAE">الإمارات</SelectItem>
-                            <SelectItem value="Singapore">سنغافورة</SelectItem>
-                            <SelectItem value="Estonia">إستونيا</SelectItem>
+                            <SelectItem value="USA">United States</SelectItem>
+                            <SelectItem value="UK">United Kingdom</SelectItem>
+                            <SelectItem value="UAE">United Arab Emirates</SelectItem>
+                            <SelectItem value="Singapore">Singapore</SelectItem>
+                            <SelectItem value="Estonia">Estonia</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
                     </div>
 
                     <div>
-                      <Label htmlFor="description">وصف النشاط التجاري</Label>
+                      <Label htmlFor="description">Business Description</Label>
                       <Textarea
                         id="description"
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
-                        placeholder="صف نشاط شركتك..."
+                        placeholder="Describe your company's business activities..."
                         rows={3}
                       />
                     </div>
 
                     <div>
-                      <Label htmlFor="wallet">عنوان المحفظة (اختياري)</Label>
+                      <Label htmlFor="wallet">Wallet Address (Optional)</Label>
                       <Input
                         id="wallet"
                         value={walletAddress}
@@ -328,29 +328,29 @@ const CreateCompany = () => {
                     <div>
                       <Label className="flex items-center gap-2 mb-2">
                         <UserPlus className="h-4 w-4" />
-                        المساهمون
+                        Shareholders
                       </Label>
                       {shareholders.map((sh, index) => (
                         <div key={index} className="grid grid-cols-4 gap-2 mb-2">
                           <Input
-                            placeholder="الاسم"
+                            placeholder="Name"
                             value={sh.name}
                             onChange={(e) => updateShareholder(index, 'name', e.target.value)}
                           />
                           <Input
-                            placeholder="البريد الإلكتروني"
+                            placeholder="Email"
                             type="email"
                             value={sh.email}
                             onChange={(e) => updateShareholder(index, 'email', e.target.value)}
                           />
                           <Input
-                            placeholder="الأسهم"
+                            placeholder="Shares"
                             type="number"
                             value={sh.shareCount || ''}
                             onChange={(e) => updateShareholder(index, 'shareCount', parseInt(e.target.value) || 0)}
                           />
                           <Input
-                            placeholder="قوة التصويت %"
+                            placeholder="Voting Power %"
                             type="number"
                             value={sh.votingPower || ''}
                             onChange={(e) => updateShareholder(index, 'votingPower', parseFloat(e.target.value) || 0)}
@@ -358,14 +358,14 @@ const CreateCompany = () => {
                         </div>
                       ))}
                       <Button type="button" variant="outline" size="sm" onClick={addShareholder} className="mt-2">
-                        + إضافة مساهم
+                        + Add Shareholder
                       </Button>
                     </div>
 
                     <div>
                       <Label className="flex items-center gap-2 mb-2">
                         <Upload className="h-4 w-4" />
-                        المستندات (شهادة التسجيل، عقد التأسيس، إلخ)
+                        Documents (Certificate of Registration, Articles of Incorporation, etc.)
                       </Label>
                       <Input
                         type="file"
@@ -375,14 +375,14 @@ const CreateCompany = () => {
                       />
                       {documents.length > 0 && (
                         <p className="text-sm text-muted-foreground mt-1">
-                          تم اختيار {documents.length} ملف
+                          {documents.length} file(s) selected
                         </p>
                       )}
                     </div>
                   </div>
 
                   <Button type="submit" className="w-full" disabled={loading}>
-                    {loading ? 'جاري التسجيل...' : 'تسجيل الشركة'}
+                    {loading ? 'Registering...' : 'Register Company'}
                   </Button>
                 </form>
               </CardContent>
@@ -392,19 +392,19 @@ const CreateCompany = () => {
           <TabsContent value="new">
             <Card>
               <CardHeader>
-                <CardTitle>تأسيس شركة جديدة</CardTitle>
+                <CardTitle>Form New Company</CardTitle>
                 <CardDescription>
-                  اختر مزود خدمة لمساعدتك في تأسيس شركة جديدة قانونياً
+                  Choose a service provider to help you legally form a new company
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSubmitViaProvider} className="space-y-6">
                   <div className="space-y-4">
                     <div>
-                      <Label htmlFor="provider">اختر مزود الخدمة *</Label>
+                      <Label htmlFor="provider">Select Service Provider *</Label>
                       <Select value={serviceProviderId} onValueChange={setServiceProviderId} required>
                         <SelectTrigger>
-                          <SelectValue placeholder="اختر مزود الخدمة" />
+                          <SelectValue placeholder="Select service provider" />
                         </SelectTrigger>
                         <SelectContent>
                           {serviceProviders.map((provider) => (
@@ -422,53 +422,53 @@ const CreateCompany = () => {
                     </div>
 
                     <div>
-                      <Label htmlFor="newCompanyName">اسم الشركة المطلوب *</Label>
+                      <Label htmlFor="newCompanyName">Desired Company Name *</Label>
                       <Input
                         id="newCompanyName"
                         value={companyName}
                         onChange={(e) => setCompanyName(e.target.value)}
-                        placeholder="اسم الشركة الجديدة"
+                        placeholder="New company name"
                         required
                       />
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor="newCompanyType">نوع الشركة *</Label>
+                        <Label htmlFor="newCompanyType">Company Type *</Label>
                         <Select value={companyType} onValueChange={setCompanyType} required>
                           <SelectTrigger>
-                            <SelectValue placeholder="اختر النوع" />
+                            <SelectValue placeholder="Select type" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="LLC">شركة ذات مسؤولية محدودة</SelectItem>
-                            <SelectItem value="C-Corp">شركة مساهمة</SelectItem>
-                            <SelectItem value="S-Corp">شركة مساهمة صغيرة</SelectItem>
+                            <SelectItem value="LLC">Limited Liability Company</SelectItem>
+                            <SelectItem value="C-Corp">C-Corporation</SelectItem>
+                            <SelectItem value="S-Corp">S-Corporation</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
 
                       <div>
-                        <Label htmlFor="newJurisdiction">الاختصاص القضائي *</Label>
+                        <Label htmlFor="newJurisdiction">Jurisdiction *</Label>
                         <Select value={jurisdiction} onValueChange={setJurisdiction} required>
                           <SelectTrigger>
-                            <SelectValue placeholder="اختر الدولة" />
+                            <SelectValue placeholder="Select country" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="USA">الولايات المتحدة</SelectItem>
-                            <SelectItem value="UK">المملكة المتحدة</SelectItem>
-                            <SelectItem value="UAE">الإمارات</SelectItem>
+                            <SelectItem value="USA">United States</SelectItem>
+                            <SelectItem value="UK">United Kingdom</SelectItem>
+                            <SelectItem value="UAE">United Arab Emirates</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
                     </div>
 
                     <div>
-                      <Label htmlFor="newDescription">وصف النشاط التجاري *</Label>
+                      <Label htmlFor="newDescription">Business Description *</Label>
                       <Textarea
                         id="newDescription"
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
-                        placeholder="صف نشاط شركتك المستقبلية..."
+                        placeholder="Describe your future company's activities..."
                         rows={3}
                         required
                       />
@@ -477,25 +477,25 @@ const CreateCompany = () => {
                     <div>
                       <Label className="flex items-center gap-2 mb-2">
                         <UserPlus className="h-4 w-4" />
-                        معلومات المؤسسين
+                        Founder Information
                       </Label>
                       {shareholders.map((sh, index) => (
                         <div key={index} className="grid grid-cols-3 gap-2 mb-2">
                           <Input
-                            placeholder="الاسم الكامل"
+                            placeholder="Full Name"
                             value={sh.name}
                             onChange={(e) => updateShareholder(index, 'name', e.target.value)}
                             required
                           />
                           <Input
-                            placeholder="البريد الإلكتروني"
+                            placeholder="Email Address"
                             type="email"
                             value={sh.email}
                             onChange={(e) => updateShareholder(index, 'email', e.target.value)}
                             required
                           />
                           <Input
-                            placeholder="نسبة الملكية %"
+                            placeholder="Ownership %"
                             type="number"
                             value={sh.votingPower || ''}
                             onChange={(e) => updateShareholder(index, 'votingPower', parseFloat(e.target.value) || 0)}
@@ -504,14 +504,14 @@ const CreateCompany = () => {
                         </div>
                       ))}
                       <Button type="button" variant="outline" size="sm" onClick={addShareholder} className="mt-2">
-                        + إضافة مؤسس
+                        + Add Founder
                       </Button>
                     </div>
 
                     <div>
                       <Label className="flex items-center gap-2 mb-2">
                         <Upload className="h-4 w-4" />
-                        مستندات KYC (جواز السفر، إثبات العنوان) *
+                        KYC Documents (Passport, Proof of Address) *
                       </Label>
                       <Input
                         type="file"
@@ -522,14 +522,14 @@ const CreateCompany = () => {
                       />
                       {documents.length > 0 && (
                         <p className="text-sm text-muted-foreground mt-1">
-                          تم اختيار {documents.length} ملف
+                          {documents.length} file(s) selected
                         </p>
                       )}
                     </div>
                   </div>
 
                   <Button type="submit" className="w-full" disabled={loading || !serviceProviderId}>
-                    {loading ? 'جاري الإرسال...' : 'إرسال الطلب'}
+                    {loading ? 'Submitting...' : 'Submit Application'}
                   </Button>
                 </form>
               </CardContent>

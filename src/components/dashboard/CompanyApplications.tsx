@@ -59,12 +59,12 @@ const CompanyApplications = () => {
 
   const getStatusBadge = (status: string) => {
     const statusConfig: Record<string, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' }> = {
-      draft: { label: 'مسودة', variant: 'outline' },
-      submitted: { label: 'تم الإرسال', variant: 'secondary' },
-      processing: { label: 'قيد المعالجة', variant: 'default' },
-      approved: { label: 'موافق عليه', variant: 'default' },
-      rejected: { label: 'مرفوض', variant: 'destructive' },
-      completed: { label: 'مكتمل', variant: 'default' },
+      draft: { label: 'Draft', variant: 'outline' },
+      submitted: { label: 'Submitted', variant: 'secondary' },
+      processing: { label: 'Processing', variant: 'default' },
+      approved: { label: 'Approved', variant: 'default' },
+      rejected: { label: 'Rejected', variant: 'destructive' },
+      completed: { label: 'Completed', variant: 'default' },
     };
 
     const config = statusConfig[status] || { label: status, variant: 'outline' };
@@ -102,15 +102,15 @@ const CompanyApplications = () => {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>طلبات الشركات</CardTitle>
-          <CardDescription>لم تقدم أي طلبات بعد</CardDescription>
+          <CardTitle>Company Applications</CardTitle>
+          <CardDescription>You haven't submitted any applications yet</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="text-center py-8">
             <FileText className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-            <p className="text-muted-foreground mb-4">لا توجد طلبات حالياً</p>
+            <p className="text-muted-foreground mb-4">No applications available</p>
             <Button onClick={() => navigate('/create-company')}>
-              إنشاء شركة جديدة
+              Create New Company
             </Button>
           </div>
         </CardContent>
@@ -120,7 +120,7 @@ const CompanyApplications = () => {
 
   return (
     <div className="space-y-4">
-      <h2 className="text-2xl font-bold">طلبات الشركات</h2>
+      <h2 className="text-2xl font-bold">Company Applications</h2>
       <div className="grid gap-4">
         {applications.map((app) => (
           <Card key={app.id} className="hover:shadow-md transition-shadow">
@@ -142,15 +142,15 @@ const CompanyApplications = () => {
 
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
-                  <span className="text-muted-foreground">نوع الطلب:</span>
+                  <span className="text-muted-foreground">Application Type:</span>
                   <p className="font-medium">
-                    {app.application_type === 'new_formation' ? 'تأسيس جديد' : 'تسجيل شركة موجودة'}
+                    {app.application_type === 'new_formation' ? 'New Formation' : 'Existing Company Registration'}
                   </p>
                 </div>
 
                 {app.service_providers && (
                   <div>
-                    <span className="text-muted-foreground">مزود الخدمة:</span>
+                    <span className="text-muted-foreground">Service Provider:</span>
                     <p className="font-medium">
                       {app.service_providers.name} ({app.service_providers.country})
                     </p>
@@ -158,14 +158,14 @@ const CompanyApplications = () => {
                 )}
 
                 <div>
-                  <span className="text-muted-foreground">حالة KYC:</span>
+                  <span className="text-muted-foreground">KYC Status:</span>
                   <p className="font-medium">{getStatusBadge(app.kyc_status)}</p>
                 </div>
 
                 <div>
-                  <span className="text-muted-foreground">تاريخ الإنشاء:</span>
+                  <span className="text-muted-foreground">Created Date:</span>
                   <p className="font-medium">
-                    {new Date(app.created_at).toLocaleDateString('ar-SA')}
+                    {new Date(app.created_at).toLocaleDateString('en-US')}
                   </p>
                 </div>
               </div>
@@ -176,7 +176,7 @@ const CompanyApplications = () => {
                     size="sm" 
                     onClick={() => navigate(`/create-company?edit=${app.id}`)}
                   >
-                    إكمال الطلب
+                    Complete Application
                   </Button>
                 </div>
               )}
