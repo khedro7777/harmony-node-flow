@@ -1,9 +1,9 @@
-import { Biconomy } from '@biconomy/mexa';
 import { ethers } from 'ethers';
 
 const BICONOMY_API_KEY = import.meta.env.VITE_BICONOMY_API_KEY;
 const USDT_CONTRACT_ADDRESS = import.meta.env.VITE_USDT_CONTRACT_ADDRESS;
 const NETWORK_CHAIN_ID = import.meta.env.VITE_NETWORK_CHAIN_ID || '1';
+const PAYMENT_RECEIVER_ADDRESS = import.meta.env.VITE_PAYMENT_RECEIVER_ADDRESS;
 
 // USDT ABI (only required functions)
 const USDT_ABI = [
@@ -20,44 +20,26 @@ export interface PaymentParams {
 }
 
 export class GaslessPaymentService {
-  private biconomy: Biconomy | null = null;
   private provider: ethers.providers.Web3Provider | null = null;
   private usdtContract: ethers.Contract | null = null;
 
   /**
-   * Initialize Biconomy and Web3 provider
+   * Initialize Web3 provider
+   * Note: For production, integrate with a gasless transaction service like Biconomy SDK v2,
+   * Gelato, or OpenZeppelin Defender
    */
   async initialize(): Promise<void> {
-    if (!BICONOMY_API_KEY) {
-      throw new Error('Biconomy API key not configured');
-    }
-
     if (typeof window.ethereum === 'undefined') {
       throw new Error('Web3 provider not found. Please install MetaMask.');
     }
 
-    this.provider = new ethers.providers.Web3Provider(window.ethereum as any);
+    // Request account access
+    await window.ethereum.request({ method: 'eth_requestAccounts' });
 
-    // Initialize Biconomy
-    this.biconomy = new Biconomy(window.ethereum, {
-      apiKey: BICONOMY_API_KEY,
-      debug: true,
-      contractAddresses: [USDT_CONTRACT_ADDRESS],
-    });
+    this.provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = this.provider.getSigner();
 
-    await new Promise<void>((resolve, reject) => {
-      this.biconomy!.onEvent(this.biconomy!.READY, () => {
-        resolve();
-      }).onEvent(this.biconomy!.ERROR, (error: any) => {
-        reject(error);
-      });
-    });
-
-    // Get biconomy provider
-    const biconomyProvider = this.biconomy.getEthersProvider();
-    const signer = biconomyProvider.getSigner();
-
-    // Initialize USDT contract with Biconomy signer
+    // Initialize USDT contract
     this.usdtContract = new ethers.Contract(USDT_CONTRACT_ADDRESS, USDT_ABI, signer);
   }
 
@@ -74,7 +56,11 @@ export class GaslessPaymentService {
   }
 
   /**
-   * Transfer USDT with gasless transaction
+   * Transfer USDT
+   * Note: Currently uses regular transactions. For gasless, integrate with:
+   * - Biconomy SDK v2 (https://docs.biconomy.io/)
+   * - Gelato (https://docs.gelato.network/)
+   * - OpenZeppelin Defender (https://docs.openzeppelin.com/defender/)
    */
   async transferUSDT(params: PaymentParams): Promise<{
     txHash: string;
@@ -88,7 +74,7 @@ export class GaslessPaymentService {
       // Convert amount to proper units (USDT has 6 decimals)
       const amountInUnits = ethers.utils.parseUnits(params.amount, 6);
 
-      // Execute gasless transfer
+      // Execute transfer
       const tx = await this.usdtContract!.transfer(
         params.recipientAddress,
         amountInUnits
@@ -108,7 +94,7 @@ export class GaslessPaymentService {
   }
 
   /**
-   * Approve USDT spending (gasless)
+   * Approve USDT spending
    */
   async approveUSDT(spenderAddress: string, amount: string): Promise<{
     txHash: string;

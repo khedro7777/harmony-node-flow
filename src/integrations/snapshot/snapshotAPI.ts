@@ -7,6 +7,12 @@ const SNAPSHOT_SPACE_ID = import.meta.env.VITE_SNAPSHOT_SPACE_ID || 'your-space.
 // Initialize Snapshot client
 const snapshotHub = new snapshot.Client712(SNAPSHOT_HUB_URL);
 
+// Type for Snapshot receipt
+interface SnapshotReceipt {
+  id?: string;
+  ipfsHash?: string;
+}
+
 interface CreateProposalParams {
   title: string;
   body: string;
@@ -50,11 +56,12 @@ export class SnapshotService {
 
     const address = await this.signer!.getAddress();
 
-    const proposal = {
+    const proposal: any = {
       space: SNAPSHOT_SPACE_ID,
       type: params.type,
       title: params.title,
       body: params.body,
+      discussion: '', // Required field
       choices: params.choices,
       start: params.start,
       end: params.end,
@@ -63,11 +70,11 @@ export class SnapshotService {
       app: params.app || 'gpo-dao',
     };
 
-    const receipt = await snapshotHub.proposal(this.signer as any, address, proposal);
+    const receipt = await snapshotHub.proposal(this.signer as any, address, proposal) as SnapshotReceipt;
     
     return {
-      id: receipt.id,
-      ipfsHash: receipt.ipfsHash || '',
+      id: receipt?.id || '',
+      ipfsHash: receipt?.ipfsHash || '',
     };
   }
 
@@ -81,7 +88,7 @@ export class SnapshotService {
 
     const address = await this.signer!.getAddress();
 
-    const vote = {
+    const vote: any = {
       space: SNAPSHOT_SPACE_ID,
       proposal: params.proposalId,
       type: 'single-choice',
@@ -90,11 +97,11 @@ export class SnapshotService {
       app: 'gpo-dao',
     };
 
-    const receipt = await snapshotHub.vote(this.signer as any, address, vote);
+    const receipt = await snapshotHub.vote(this.signer as any, address, vote) as SnapshotReceipt;
 
     return {
-      id: receipt.id,
-      ipfsHash: receipt.ipfsHash || '',
+      id: receipt?.id || '',
+      ipfsHash: receipt?.ipfsHash || '',
     };
   }
 
