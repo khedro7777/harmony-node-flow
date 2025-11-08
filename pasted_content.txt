@@ -1,0 +1,301 @@
+تمام يا محمد ✅
+هكتب لك الآن صياغة إنجليزية احترافية توضّح المشروع بعد التعديل الجديد، وتشرح الفرق عن البرومبت القديم، حتّى تقدّمها لـ Lovable أو أي فريق بناء.
+هذا النص يُستخدم كـ Prompt / Product Brief Update.
+
+
+---
+
+✅ Updated GPO DAO Prompt — With Full Web3 + IPFS + Gas Optional Flow
+
+🏗️ Project: GPO DAO — Fully Decentralized Governance & Company Formation Platform
+
+GPO DAO is a Web3-native platform for company formation, shareholder governance, decentralized voting, treasury management, and on-chain business operations, designed for global digital companies & investor groups.
+
+The platform enables companies to:
+
+Register a company entity (on-chain or via service partners)
+
+Issue equity tokens for shareholders
+
+Perform governance using Snapshot
+
+Store corporate documents & data on IPFS / Filecoin
+
+Manage treasury via Safe multi-sig
+
+Support optional gasless UX or pay-per-gas model
+
+Never rely on centralized storage or backend servers
+
+
+This ensures zero custody, zero user-data storage, and no operator lock-in — even if the platform disappears, the DAO continues operating.
+
+
+---
+
+🎯 Key Changes vs. Previous Prompt (Last Month)
+
+Feature	Old Prompt	New Prompt
+
+Data storage	Supabase DB	IPFS / Filecoin (no centralized DB)
+Auth	Supabase Auth + DB users	Wallet-based login (Web3 login only)
+Governance	Internal proposal system	Snapshot DAO Space with Web3 strategies
+Equity/shares	Simulated roles & counts	Real ERC-20 equity token model (Shares = Tokens)
+Payments	Intended Web2/Stripe	On-chain USDT / USDC + optional gasless
+Treasury	N/A	Gnosis Safe (multi-sig treasury)
+Company creation	Internal form	Dual mode: on-chain formation OR service-provider incorporation API (Atlas-style)
+Vendor ecosystem	Not defined	DAO Marketplace for banks, auditors, legal partners
+Persistence	Relies on platform/cloud	Self-sovereign DAO — persistent even if platform dies
+Focus	Web2 SaaS governance	Web3 digital company engine
+
+
+
+---
+
+🧠 Core Principles
+
+User sovereignty — No platform custody or data ownership
+
+Permanent corporate records — Stored on IPFS / Filecoin
+
+Wallet = Identity — No email login required
+
+Optional gasless UX (low entry barrier)
+
+Future-proof corporate governance — DAO + legal hybrid
+
+Composable open modules, not proprietary lock-in
+
+
+
+---
+
+🧩 Updated System Architecture
+
+Front-End
+
+Next.js / React / Tailwind
+
+On-chain wallet authentication (RainbowKit / Wagmi)
+
+Web3 company dashboard
+
+Upload docs → stored permanently on IPFS
+
+
+On-Chain
+
+Smart contracts for:
+
+Share tokens (ERC-20)
+
+DAO registry
+
+Investor registry
+
+Voting power mapping
+
+
+
+Governance
+
+Snapshot (space auto-creation flow)
+
+Delegation, quorum, multi-token strategies
+
+
+Documents & Files
+
+IPFS / Filecoin (Pinning service optional)
+
+
+Treasury
+
+Gnosis Safe multi-sig for each company
+
+
+Payments
+
+USDC primary
+
+Optional gasless via Biconomy
+
+Fallback: user pays gas
+
+Platform fee model: flat USDC fee per transaction (e.g., $1)
+
+
+Hosting
+
+Vercel (static deploy only — no backend)
+
+No Supabase / no databases
+
+
+Emergency decentralization guarantee If platform stops:
+
+DAO still exists
+
+Company contracts still running
+
+Snapshot voting still works
+
+All data retrievable from IPFS
+
+
+
+---
+
+👥 User Roles & Flows
+
+Role	Capabilities
+
+Founder	Create DAO company, issue shares, invite investors
+Investor	Buy company share-tokens, vote, receive returns
+Service Provider	Offer incorporation, banking, audit, legal APIs
+Platform Admin	Only curates partner list — not data owner
+
+
+
+---
+
+🚀 User Journey
+
+1) Connect Wallet
+
+Wallet = identity
+
+ENS or DID optional
+
+
+2) Create Company (Two Options)
+
+Mode	Description
+
+On-chain formation	Create DAO company contract + equity token
+Via service provider	Like Stripe Atlas, call partner API to incorporate
+
+
+Documents → uploaded to IPFS CID, permanently stored.
+
+3) Issue Shares Token
+
+ERC-20 token = equity
+Used in voting strategy.
+
+4) Run the DAO
+
+Create Snapshot Space automatically
+
+Vote on proposals
+
+Manage treasury with Safe
+
+Add investors & partners
+
+Execute payments
+
+
+
+---
+
+💰 Business Model
+
+$1 USDC fee per operation (mint share, transfer share, proposal execution…)
+
+Referral fees from service providers (bank, incorporation, audit partners)
+
+Premium business governance tools later
+
+No custody — protocol earns only per usage
+
+
+
+---
+
+🔌 Required Integrations
+
+Module	Choice	Reason
+
+Wallets	RainbowKit	UX standard + Safe support
+Voting	Snapshot.js	Gasless governance leader
+Storage	IPFS + Filecoin	Decentralized documents
+Treasury	Gnosis Safe	Industry standard
+Gasless	Biconomy (optional)	User‐friendly optional meta-tx
+
+
+
+---
+
+🧱 Folder Architecture Update
+
+/src
+ ┣ /web3
+ ┃ ┣ wallet.ts
+ ┃ ┣ contracts/
+ ┃ ┣ snapshot/
+ ┃ ┗ safe/
+ ┣ /modules
+ ┃ ┣ company/
+ ┃ ┣ providers/
+ ┃ ┣ governance/
+ ┃ ┗ treasury/
+ ┣ /ipfs
+ ┃ ┗ upload.ts
+ ┣ /pages
+ ┃ ┣ create-company
+ ┃ ┣ dashboard
+ ┃ ┣ providers
+ ┃ ┗ snapshot
+
+
+---
+
+✅ Request to Lovable
+
+Please rebuild the platform based on this updated architecture.
+
+Focus on:
+
+Wallet-only auth (no Supabase)
+
+Share tokens = equity
+
+Snapshot governance auto-setup
+
+IPFS document storage
+
+Gnosis Safe per-company treasury
+
+Gas optional (Biconomy toggle)
+
+$1 flat protocol fee
+
+
+This replaces the previous Supabase-centric SaaS model.
+
+> Output should remain modular & open-source — users own data, not the platform.
+
+
+
+
+---
+
+🎤 Final question for you before we lock it:
+
+Do you want the:
+
+✅ USDC fee contract built now OR
+
+🕓 mock $1 fee until MVP demo?
+
+
+Reply with:
+
+> “Build USDC fee contract”
+or
+“Mock it for MVP first”
+
+
+
+وهنكمل 👑

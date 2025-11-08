@@ -1,0 +1,11 @@
+development:
+  adapter: postgresql
+  database: loomio_development
+  username: ubuntu
+  password: password
+
+test:
+  adapter: postgresql
+  database: loomio_test
+  username: ubuntu
+  password: password
